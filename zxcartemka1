@@ -1,0 +1,102 @@
+#coded by DEM =]
+from telethon.sync import TelegramClient, events
+from telethon import TelegramClient, sync
+from telethon import events, utils
+from telethon.tl.functions.messages import GetDialogsRequest
+from telethon.tl.functions.messages import SendMessageRequest
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.types import InputPeerEmpty, PeerUser, PeerChat, PeerChannel
+from telethon.errors import FloodWaitError
+from telethon.errors import SessionPasswordNeededError
+from telethon.tl.functions.channels import InviteToChannelRequest
+import datetime
+import requests
+import time
+import random
+import tracemalloc
+import asyncio
+import concurrent.futures
+import json
+import tracemalloc
+
+
+api_id001 = '25627628'
+api_hash001 = '7c3bdaf1c904c3b613443d7add4e7d1e'
+phone001 = '+6283869525095'
+
+api_id002 = '29262507'
+api_hash002 = 'f1330922837c28ff37655b55a5e31fe6'
+phone002 = '+6285768493578'
+
+api_id003 = '23324836'
+api_hash003 = 'c16db2da41bca03e6346fa5c6ab01c80'
+phone003 = '+6282250504003'
+
+cloud_password1 = '12s1290rp'
+
+# Создание клиентов 
+client001 = TelegramClient('session001', api_id001, api_hash001)
+client002 = TelegramClient('session002', api_id002, api_hash002)
+client003 = TelegramClient('session003', api_id003, api_hash003)
+
+# Авторизация
+clients = [client001, client002, client003]
+
+client001.connect()
+if not client001.is_user_authorized():
+    client001.send_code_request(phone001)
+    try:
+        client001.sign_in(phone001, input('Session-001 Введите код подтверждения: '), password=cloud_password1)
+    except SessionPasswordNeededError:
+        client001.sign_in(password=cloud_password1)
+
+client002.connect()
+if not client002.is_user_authorized():
+    client002.send_code_request(phone002)
+    try:
+        client002.sign_in(phone002, input('Session-002 Введите код подтверждения: '), password=cloud_password1)
+    except SessionPasswordNeededError:
+        client002.sign_in(password=cloud_password1)
+
+client003.connect()
+if not client003.is_user_authorized():
+    client003.send_code_request(phone003)
+    try:
+        client003.sign_in(phone003, input('Session-003 Введите код подтверждения: '), password=cloud_password1)
+    except SessionPasswordNeededError:
+        client003.sign_in(password=cloud_password1)
+
+# Создаем список для хранения ссылок на каналы
+channel_links = []
+
+clients_added = False
+for client in clients:
+    client.start()
+    tracemalloc.start()
+    try:
+        client(JoinChannelRequest('@farmtgpremov_zxc'))
+        clients_added = True
+    except Exception as e:
+        print(f'Ошибка при присоединении клиента к группе @farmtgpremov_zxc: {e}')
+if clients_added:
+    print("клиенты запущены, в группу добавлены")
+else:
+    print("клиенты запущены, группа подготовлена")
+# Функция для подписки на каналы
+async def join_channel(client, link):
+    await client(JoinChannelRequest(link))
+    print(f'Присоединился к каналу: {link}')
+# Функция-обработчик новых сообщений в группе
+async def handle_group_message(event):
+    message_text = event.message.message.lower()
+    if message_text.startswith('join'):
+        link = message_text.split(' ')[1]
+        channel_links.append(link)
+        print(f'Добавлена ссылка на канал: {link}')
+        for client in clients:
+            await join_channel(client, link)
+            time.sleep(3)
+# Запускаем клиентов и подписываемся на события новых сообщений в группе
+for client in clients:
+    client.add_event_handler(handle_group_message, events.NewMessage(chats='@farmtgpremov_zxc'))
+    client.run_until_disconnected()
