@@ -20,27 +20,17 @@ import json
 import tracemalloc
 
 
-api_id001 = '25627628'
-api_hash001 = '7c3bdaf1c904c3b613443d7add4e7d1e'
-phone001 = '+6283869525095'
-
-api_id002 = '29262507'
-api_hash002 = 'f1330922837c28ff37655b55a5e31fe6'
-phone002 = '+6285768493578'
-
-api_id003 = '23324836'
-api_hash003 = 'c16db2da41bca03e6346fa5c6ab01c80'
-phone003 = '+6282250504003'
+api_id001 = '23300404'
+api_hash001 = 'f9f4667004c946e4cccc9e50ba0b39b0'
+phone001 = '+6285817931151'
 
 cloud_password1 = '12s1290rp'
 
 # Создание клиентов 
 client001 = TelegramClient('session001', api_id001, api_hash001)
-client002 = TelegramClient('session002', api_id002, api_hash002)
-client003 = TelegramClient('session003', api_id003, api_hash003)
 
 # Авторизация
-clients = [client001, client002, client003]
+clients = [client001]
 
 client001.connect()
 if not client001.is_user_authorized():
@@ -49,22 +39,6 @@ if not client001.is_user_authorized():
         client001.sign_in(phone001, input('Session-001 Введите код подтверждения: '), password=cloud_password1)
     except SessionPasswordNeededError:
         client001.sign_in(password=cloud_password1)
-
-client002.connect()
-if not client002.is_user_authorized():
-    client002.send_code_request(phone002)
-    try:
-        client002.sign_in(phone002, input('Session-002 Введите код подтверждения: '), password=cloud_password1)
-    except SessionPasswordNeededError:
-        client002.sign_in(password=cloud_password1)
-
-client003.connect()
-if not client003.is_user_authorized():
-    client003.send_code_request(phone003)
-    try:
-        client003.sign_in(phone003, input('Session-003 Введите код подтверждения: '), password=cloud_password1)
-    except SessionPasswordNeededError:
-        client003.sign_in(password=cloud_password1)
 
 # Создаем список для хранения ссылок на каналы
 channel_links = []
